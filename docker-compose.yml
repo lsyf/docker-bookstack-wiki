@@ -11,7 +11,7 @@ services:
     - mysql-data:/var/lib/mysql
 
   bookstack:
-    image: solidnerd/bookstack:22.04.02
+    image: lsyf/bookstack:22.04.02.lf
     depends_on:
     - mysql
     environment:
@@ -20,7 +20,7 @@ services:
     - DB_USERNAME=bookstack
     - DB_PASSWORD=secret
     #set the APP_ to the URL of bookstack without without a trailing slash APP_URL=https://example.com
-    - APP_URL=http://example.com
+    - APP_URL=http://localhost:8080
     volumes:
     - uploads:/var/www/bookstack/public/uploads
     - storage-uploads:/var/www/bookstack/storage/uploads

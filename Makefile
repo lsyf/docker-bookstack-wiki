@@ -1,10 +1,10 @@
-DOCKER_RELEASE_REG=solidnerd
+DOCKER_RELEASE_REG=lsyf
 DOCKER_IMAGE=bookstack
 DOCKER_IMAGE_DEV=${DOCKER_IMAGE}-dev
-DOCKER_INTERNAL_TAG := "sha-$(shell git rev-parse --short HEAD)"
-DOCKER_RELEASE_TAG := $(shell git describe)
+DOCKER_INTERNAL_TAG := 22.04.02.lf
+DOCKER_RELEASE_TAG := ${DOCKER_INTERNAL_TAG}
 BUILD_DATE := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-VCS_URL := https://github.com/solidnerd/docker-bookstack
+VCS_URL := https://github.com/lsyf/docker-bookstack-wiki
 
 .PHONY: build  push pull release
 

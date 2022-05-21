@@ -1,16 +1,20 @@
 FROM alpine:3 as bookstack
-ENV BOOKSTACK_VERSION=22.04.2
-RUN apk add --no-cache curl tar
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories; \
+     apk update; \
+     apk upgrade; \
+     apk add --no-cache curl tar
+COPY bookstack.tar.gz /
 RUN set -x; \
-    curl -SL -o bookstack.tar.gz https://github.com/BookStackApp/BookStack/archive/v${BOOKSTACK_VERSION}.tar.gz  \
-    && mkdir -p /bookstack \
-    && tar xvf bookstack.tar.gz -C /bookstack --strip-components=1 \
+    mkdir -p /bookstack \
+    && tar xvf bookstack.tar.gz -C /bookstack \
     && rm bookstack.tar.gz
 
 FROM php:8.1-apache-buster as final
 RUN set -x; \
-    apt-get update \
-    && apt-get install -y --no-install-recommends \
+        rm -rf  /etc/apt/sources.list \
+        && echo "deb http://mirrors.aliyun.com/debian/ buster main non-free contrib  \ndeb http://mirrors.aliyun.com/debian-security buster/updates main  \ndeb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib  \ndeb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib  \n" > /etc/apt/sources.list \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
         git \
         zlib1g-dev \
         libfreetype6-dev \
@@ -26,9 +30,9 @@ RUN set -x; \
         tar \
         curl \
         libzip-dev \
-        unzip \
-	&& wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
-	&& chmod a+x ./wkhtmltox_0.12.6-1.buster_amd64.deb \
+        unzip
+COPY wkhtmltox_0.12.6-1.buster_amd64.deb ./
+RUN chmod a+x ./wkhtmltox_0.12.6-1.buster_amd64.deb \
     && apt-get install -y ./wkhtmltox_0.12.6-1.buster_amd64.deb \
     && rm ./wkhtmltox_0.12.6-1.buster_amd64.deb \
     && docker-php-ext-install -j$(nproc) dom pdo pdo_mysql zip tidy  \
@@ -57,6 +61,7 @@ COPY --from=bookstack --chown=33:33 /bookstack/ /var/www/bookstack/
 ARG COMPOSER_VERSION=2.1.12
 RUN set -x; \
     cd /var/www/bookstack \
+    && ls \
     && curl -sS https://getcomposer.org/installer | php -- --version=$COMPOSER_VERSION \
     && /var/www/bookstack/composer.phar install -v -d /var/www/bookstack/ \
     && rm -rf /var/www/bookstack/composer.phar /root/.composer \
