@@ -1,4 +1,4 @@
-FROM alpine:3 as bookstack
+FROM harbor.cncico.com/mirror/library/alpine:3 as bookstack
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories; \
      apk update; \
      apk upgrade; \
@@ -9,7 +9,7 @@ RUN set -x; \
     && tar xvf bookstack.tar.gz -C /bookstack \
     && rm bookstack.tar.gz
 
-FROM php:8.1-apache-buster as final
+FROM harbor.cncico.com/proxy/library/php:8.1-apache-buster as final
 RUN set -x; \
         rm -rf  /etc/apt/sources.list \
         && echo "deb http://mirrors.aliyun.com/debian/ buster main non-free contrib  \ndeb http://mirrors.aliyun.com/debian-security buster/updates main  \ndeb http://mirrors.aliyun.com/debian/ buster-updates main non-free contrib  \ndeb http://mirrors.aliyun.com/debian/ buster-backports main non-free contrib  \n" > /etc/apt/sources.list \

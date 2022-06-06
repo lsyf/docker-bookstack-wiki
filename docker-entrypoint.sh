@@ -15,6 +15,10 @@ if [ ! -f ".env" ]; then
       APP_DEBUG=${APP_DEBUG:-false}
       APP_KEY=${APP_KEY:-SomeRandomStringWith32Characters}
 
+      APP_LANG=${APP_LANG:-zh_CN}
+      APP_TIMEZONE=${APP_TIMEZONE:-Asia/Shanghai}
+      FILE_UPLOAD_SIZE_LIMIT=${FILE_UPLOAD_SIZE_LIMIT:-50}
+
       # The below url has to be set if using social auth options
       # or if you are not using BookStack at the root path of your domain.
       APP_URL=${APP_URL:-null}
